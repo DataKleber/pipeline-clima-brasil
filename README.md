@@ -228,7 +228,99 @@ crontab -e
 - Monitoring and alerting
 
 ---
+## 📊 SQL Analysis & Results
+
+All queries are available in [`src/analises.sql`](src/analises.sql).
+
+---
+
+### 1. Current temperature by city
+
+```sql
+SELECT cidade, temperatura_c, descricao
+FROM clima_cidades
+ORDER BY temperatura_c DESC;
+```
+
+| City | Temp (°C) | Description |
+|---|---|---|
+| Salvador | 28.0 | Partly cloudy |
+| Fortaleza | 28.0 | Partly cloudy |
+| Brasilia | 25.0 | Partly cloudy |
+| Rio de Janeiro | 24.0 | Partly cloudy |
+| Sao Paulo | 21.0 | Partly cloudy |
+
+---
+
+### 2. Hottest city recorded
+
+```sql
+SELECT cidade, MAX(temperatura_c) AS max_temperatura
+FROM clima_cidades
+GROUP BY cidade
+ORDER BY max_temperatura DESC
+LIMIT 1;
+```
+
+| City | Max Temp (°C) |
+|---|---|
+| Salvador | 28.0 |
+
+---
+
+### 3. Average temperature per city
+
+```sql
+SELECT cidade, ROUND(AVG(temperatura_c)::numeric, 1) AS media_temp
+FROM clima_cidades
+GROUP BY cidade
+ORDER BY media_temp DESC;
+```
+
+| City | Avg Temp (°C) |
+|---|---|
+| Salvador | 26.8 |
+| Fortaleza | 26.8 |
+| Brasilia | 25.0 |
+| Rio de Janeiro | 24.8 |
+| Sao Paulo | 21.0 |
+
+---
+
+### 4. Cities with humidity above 80%
+
+```sql
+SELECT cidade, umidade_pct, temperatura_c
+FROM clima_cidades
+WHERE umidade_pct > 80
+ORDER BY umidade_pct DESC;
+```
+
+| City | Humidity (%) | Temp (°C) |
+|---|---|---|
+| Rio de Janeiro | 100.0 | 24.0 |
+| Sao Paulo | 94.0 | 21.0 |
+| Rio de Janeiro | 94.0 | 25.0 |
+
+---
+
+### 5. Latest record per city
+
+```sql
+SELECT DISTINCT ON (cidade) cidade, temperatura_c, descricao, processado_em
+FROM clima_cidades
+ORDER BY cidade, processado_em DESC;
+```
+
+| City | Temp (°C) | Description |
+|---|---|---|
+| Brasilia | 25.0 | Partly cloudy |
+| Fortaleza | 25.0 | Partly cloudy |
+| Rio de Janeiro | 24.0 | Partly cloudy |
+| Salvador | 25.0 | Shower in vicinity |
+| Sao Paulo | 21.0 | Partly cloudy |
 
 ## 💡 Conclusion
 
 This project demonstrates how to design and implement a structured data pipeline using industry best practices — transforming raw API data into reliable, analytics-ready datasets through a clean Medallion Architecture.
+git commit -m "docs: atualizar README com estrutura real do projeto"
