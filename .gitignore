@@ -1,5 +1,31 @@
+# Ambiente virtual
 venv/
+
+# Variáveis de ambiente (NUNCA subir isso!)
 .env
+
+# Python
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+
+# Dados e logs
 data/
+pipeline_clima.log
+task_scheduler_erro.log
+*.log
+
+# Banco de dados local
+*.db
+*.sqlite
+
+# VS Code
+.vscode/
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Migração (script temporário)
+migrar.py

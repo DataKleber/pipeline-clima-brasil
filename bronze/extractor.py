@@ -1,7 +1,14 @@
 import requests
+import logging
 from datetime import datetime
-
-# Cidades brasileiras que vamos monitorar
+ 
+# Configuracao de logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+)
+ 
 CIDADES = [
     "Sao Paulo,BR",
     "Rio de Janeiro,BR",
@@ -9,38 +16,50 @@ CIDADES = [
     "Salvador,BR",
     "Fortaleza,BR"
 ]
-
+ 
 BASE_URL = "https://wttr.in"
-
-def buscar_clima(cidade):
-    """Busca dados de clima de uma cidade"""
+ 
+ 
+def buscar_clima(cidade: str) -> dict | None:
+    """Busca dados de clima de uma cidade via API wttr.in"""
     try:
         url = f"{BASE_URL}/{cidade}?format=j1"
         response = requests.get(url, timeout=10)
         response.raise_for_status()
         dados = response.json()
-        print(f"Dados obtidos para: {cidade}")
+        logging.info(f"Dados obtidos para: {cidade}")
         return dados
-    except Exception as e:
-        print(f"Erro ao buscar {cidade}: {e}")
+    except requests.exceptions.Timeout:
+        logging.error(f"Timeout ao buscar {cidade}")
         return None
-
-def extrair_todos():
-    """Extrai dados de todas as cidades"""
-    print("Iniciando extracao de dados...")
+    except requests.exceptions.HTTPError as e:
+        logging.error(f"Erro HTTP ao buscar {cidade}: {e}")
+        return None
+    except Exception as e:
+        logging.error(f"Erro inesperado ao buscar {cidade}: {e}")
+        return None
+ 
+ 
+def extrair_todos() -> list[dict]:
+    """Extrai dados de todas as cidades e retorna lista de registros brutos"""
+    logging.info("Iniciando extracao de dados (Bronze)...")
     resultados = []
+ 
     for cidade in CIDADES:
         dados = buscar_clima(cidade)
         if dados:
             resultados.append({
                 "cidade": cidade.split(",")[0],
                 "dados_brutos": dados,
-                "extraido_em": datetime.now().isoformat()
+                "extraido_em": datetime.now(),   # datetime nativo, nao string
+                "source": "wttr_api"
             })
-    print(f"Extracao concluida! {len(resultados)} cidades coletadas.")
+ 
+    logging.info(f"Extracao concluida! {len(resultados)}/{len(CIDADES)} cidades coletadas.")
     return resultados
-
-# Teste rapido
+ 
+ 
 if __name__ == "__main__":
     dados = extrair_todos()
-    print(dados[0]["cidade"])
+    if dados:
+        logging.info(f"Primeira cidade extraida: {dados[0]['cidade']}")
