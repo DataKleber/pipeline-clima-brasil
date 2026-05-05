@@ -320,7 +320,8 @@ ORDER BY cidade, processado_em DESC;
 | Salvador | 25.0 | Shower in vicinity |
 | Sao Paulo | 21.0 | Partly cloudy |
 
+---
+
 ## 💡 Conclusion
 
 This project demonstrates how to design and implement a structured data pipeline using industry best practices — transforming raw API data into reliable, analytics-ready datasets through a clean Medallion Architecture.
-git commit -m "docs: atualizar README com estrutura real do projeto"
