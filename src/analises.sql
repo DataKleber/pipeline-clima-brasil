@@ -26,3 +26,21 @@ ORDER BY umidade_pct DESC;
 SELECT DISTINCT ON (cidade) cidade, temperatura_c, descricao, processado_em
 FROM clima_cidades
 ORDER BY cidade, processado_em DESC;
+
+-- Qual foi a 1a, 2a, 3a coleta de cada cidade?
+SELECT
+    cidade,
+    temperatura_c,
+    extraido_em,
+    ROW_NUMBER() OVER (PARTITION BY cidade ORDER BY extraido_em) AS numero_coleta
+FROM clima_cidades
+ORDER BY cidade, numero_coleta;
+
+-- Qual foi a 1a, 2a, 3a coleta de cada cidade?
+SELECT
+    cidade,
+    temperatura_c,
+    extraido_em,
+    ROW_NUMBER() OVER (PARTITION BY cidade ORDER BY extraido_em) AS numero_coleta
+FROM clima_cidades
+ORDER BY cidade, numero_coleta;
